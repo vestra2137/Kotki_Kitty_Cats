@@ -17,5 +17,18 @@ namespace VHS
         public bool multipleUse;
 
         public bool isInteractable;
+
+        public float HoldDuration => throw new System.NotImplementedException();
+
+        public bool HoldInteract => throw new System.NotImplementedException();
+
+        public bool MultipleUse => throw new System.NotImplementedException();
+
+        public bool IsInteractable => throw new System.NotImplementedException();
+
+        public void OnInteract()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
