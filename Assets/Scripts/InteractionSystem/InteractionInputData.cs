@@ -1,34 +1,31 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Build;
 
-    namespace VHS
+namespace VHS
 {
-[CreateAssetMenu(fileName = "InteractionInputData", menuName = "InteractionSystem/InputData")]
-public class InteractionInputData : ScriptableObject
-
-{
-    public bool m_interactedClicked;
-
-    public bool m_interactedRelase;
-
-    public bool InteractedClicked
+    [CreateAssetMenu(fileName = "InteractionInputData", menuName = "InteractionSystem/InputData")]
+    public class InteractionInputData : ScriptableObject
     {
-        get => m_interactedClicked;
-        set => m_interactedClicked = value;
-    }
+        [Header("Internal")]
+        public bool interactedClicked;
+        public bool interactedRelease;
 
-    public bool InteractedRelase
-    {
-        get => m_interactedRelase;
-        set => m_interactedRelase = value;
-    }
+        public bool InteractedClicked
+        {
+            get => interactedClicked;
+            set => interactedClicked = value;
+        }
 
-    public void Reset()
-    {
-        m_interactedClicked = false;
-        m_interactedRelase = false;
+        public bool InteractedRelease
+        {
+            get => interactedRelease;
+            set => interactedRelease = value;
+        }
+
+        public void Reset()
+        {
+            interactedClicked = false;
+            interactedRelease = false;
+        }
     }
 }
-}
+
