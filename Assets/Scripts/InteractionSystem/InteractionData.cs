@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace VHS
 {
     [CreateAssetMenu(fileName = "InteractionData", menuName = "InteractionSystem/InteractionData")]
-
     public class InteractionData : ScriptableObject
     {
         private InteractableBase m_interactable;
@@ -22,11 +21,12 @@ namespace VHS
             ResetData();
         }
 
-        public bool IsSameInteractable(InteractableBase _newInteractable) => m_interactable == _newInteractable;
-     
+        public bool IsSameInteractable(InteractableBase newInteractable)
+            => m_interactable == newInteractable;
 
-        public void ResetData() => m_interactable = null;
-
-        public void IsEmpty() => m_interactable = null;
+        public void ResetData()
+            => m_interactable = null;
+        public bool IsEmpty()
+            => m_interactable == null;
     }
 }
