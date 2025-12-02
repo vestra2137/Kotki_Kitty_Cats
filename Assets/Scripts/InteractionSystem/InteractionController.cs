@@ -4,131 +4,127 @@ using System.Collections.Generic;
 
 namespace VHS
 {
-
-
     public class InteractionController : MonoBehaviour
     {
-        #region Variables
-
         [Header("Data")]
+        [SerializeField] private InteractionInputData interactionInputData;
+        [SerializeField] private InteractionData interactionData;
 
-        public InteractionInputData interactionInputData;
+        [Header("UI")]
+        [SerializeField] private InteractionUI uiPanel;
 
-        public InteractionData interactionData;
-
-        [Space]
         [Header("Ray Settings")]
+        [SerializeField] private float rayDistance = 3f;
+        [SerializeField] private float raySphereRadius = 0.3f;
+        [SerializeField] private LayerMask interactableLayer;
 
-        public float rayDistance;
-
-        public float raySphereRadius;
-
-        public LayerMask interactableLayer;
-
-
-        #region Private
         private Camera m_cam;
-
-        private bool m_interacting;
-
+        private bool m_interacting = false;
         private float m_holdTimer = 0f;
 
-        #endregion
-
-
-        #endregion
-
-        #region Built In Methods
-        void Awake()
+        private void Awake()
         {
-            m_cam = Object.FindFirstObjectByType<Camera>();
-        } 
+            m_cam = Camera.main;
+        }
 
-        void Update()
+        private void Update()
         {
             CheckForInteractable();
             CheckForInteractableInput();
         }
-        #endregion
 
-        #region Custom methods
-        void CheckForInteractable()
+        private void CheckForInteractable()
         {
             Ray _ray = new Ray(m_cam.transform.position, m_cam.transform.forward);
             RaycastHit _hitInfo;
 
-            bool _hitSomething = Physics.SphereCast(_ray, raySphereRadius, out _hitInfo, rayDistance, interactableLayer);
+            bool _hitSomething = Physics.SphereCast(
+                _ray,
+                raySphereRadius,
+                out _hitInfo,
+                rayDistance,
+                interactableLayer
+            );
 
-            if ( _hitSomething)
+            Debug.DrawRay(_ray.origin, _ray.direction * rayDistance, _hitSomething ? Color.green : Color.red);
+
+            if (_hitSomething)
             {
                 InteractableBase interactable = _hitInfo.transform.GetComponent<InteractableBase>();
 
-                if(interactable != null)
+                if (interactable != null)
                 {
-                    if(interactionData.IsEmpty())
+                    if (interactionData.IsEmpty())
                     {
                         interactionData.Interactable = interactable;
+                        uiPanel.SetTooltip("Interact");
                     }
-                    else
+                    else if (!interactionData.IsSameInteractable(interactable))
                     {
-                        if (!interactionData.IsSameInteractable(interactable))
-                        {
-                            interactionData.Interactable = interactable;
-                        }
-                    
+                        interactionData.Interactable = interactable;
+                        uiPanel.SetTooltip(interactable.TooltipMessage);
                     }
-                   
                 }
             }
             else
             {
+                uiPanel.ResetUI();
                 interactionData.ResetData();
             }
-
-            Debug.DrawRay(_ray.origin, _ray.direction * rayDistance, _hitSomething ? Color.green : Color.red);
-
         }
 
-        void CheckForInteractableInput()
+        private void CheckForInteractableInput()
         {
             if (interactionData.IsEmpty())
                 return;
 
-            if(interactionInputData.InteractedClicked)
+            // Wciœniêcie
+            if (interactionInputData.InteractedClicked)
             {
                 m_interacting = true;
                 m_holdTimer = 0f;
+                interactionInputData.InteractedClicked = false;
             }
 
-            if(interactionInputData.InteractedRelease)
+            // Puszczenie
+            if (interactionInputData.InteractedRelease)
             {
                 m_interacting = false;
                 m_holdTimer = 0f;
+                interactionInputData.InteractedRelease = false;
+                uiPanel.UpdateProgressBar(0f);
             }
 
-            if(m_interacting)
+            if (!m_interacting)
+                return;
+
+            InteractableBase interactable = interactionData.Interactable;
+
+            if (!interactable.IsInteractable)
+                return;
+
+            if (interactable.HoldInteract)
             {
-                if (interactionData.Interactable.IsInteractable)
-                    return;
+                // Trzymanie przycisku
+                m_holdTimer += Time.deltaTime;
 
-                if(interactionData.Interactable.HoldInteract)
-                {
-                    m_holdTimer += Time.deltaTime;
+                float percent = m_holdTimer / interactable.HoldDuration;
+                uiPanel.UpdateProgressBar(percent);
 
-                    if(m_holdTimer >= interactionData.Interactable.HoldDuration)
-                    {
-                        interactionData.Interact();
-                        m_interacting = false;
-                    }
-                }
-                else
+                if (percent >= 1f)
                 {
                     interactionData.Interact();
                     m_interacting = false;
+                    uiPanel.ResetUI();
                 }
             }
+            else
+            {
+                // Klikniêcie
+                interactionData.Interact();
+                m_interacting = false;
+                uiPanel.ResetUI();
+            }
         }
-        #endregion
-    }   
-
+    }
 }
