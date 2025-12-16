@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Flickering_light : MonoBehaviour
 {
-    private Light light;
+    private new Light light;
     public float minIntensity = .5f;
     public float maxIntensity = 5.0f;
     public float flickerSpeed = 0.1f;
