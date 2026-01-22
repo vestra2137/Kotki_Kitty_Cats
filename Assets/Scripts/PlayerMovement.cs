@@ -9,8 +9,8 @@ public class PlayerMovement : MonoBehaviour
     public Camera playerCamera;
 
     [Header("Movement Settings")]
-    public float walkSpeed = 6f;
-    public float runSpeed = 12f;
+    public float walkSpeed = 10f;
+    public float runSpeed = 18f;
     public float jumpPower = 7f;
     public float gravity = 10f;
 
