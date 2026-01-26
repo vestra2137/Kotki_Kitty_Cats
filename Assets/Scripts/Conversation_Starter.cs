@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DialogueEditor;
 
-public class Conversation_Starter : MonoBehaviour
+public class ConversationStarter : MonoBehaviour
 {
     [SerializeField] private NPCConversation DialogueTest;
     private void OnTriggerStay(Collider other)
